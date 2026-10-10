@@ -1,0 +1,890 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGPS - Documents</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7ff;
+            color: #172033;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #2563eb;
+            color: white;
+            padding: 25px;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 45px;
+        }
+
+        .nav-item {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255,255,255,0.18);
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 40px;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .top-section h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .top-section p,
+        .document-card p {
+            color: #64748b;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .upload-btn,
+        .save-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 13px 22px;
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        .upload-btn:hover,
+        .save-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .search-box,
+        .form-input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #dbe3f0;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 15px;
+            outline: none;
+            background: white;
+        }
+
+        .categories {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .category {
+            background: white;
+            border: 1px solid #dbe3f0;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .category.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .form-panel {
+            display: none;
+            background: white;
+            padding: 24px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(37,99,235,.08);
+        }
+
+        .form-panel h2 {
+            margin-bottom: 18px;
+        }
+
+        .form-panel label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .form-panel .form-input {
+            margin-bottom: 15px;
+        }
+
+        .help-text {
+            font-size: 13px;
+            color: #64748b;
+            margin: -5px 0 15px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cancel-btn {
+            padding: 12px 18px;
+            border: 1px solid #dbe3f0;
+            background: white;
+            border-radius: 9px;
+        }
+
+        .documents {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .document-card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(37,99,235,.08);
+            overflow-wrap: anywhere;
+        }
+
+        .document-icon {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .document-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .document-card p {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .valid {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .expiring {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .expired {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .view-btn,
+        .download-btn,
+        .edit-btn,
+        .delete-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .download-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .edit-btn {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .view-btn:hover {
+            background: #dbeafe;
+        }
+
+        .delete-btn:hover {
+            background: #fecaca;
+        }
+
+        #message {
+            margin-bottom: 20px;
+            color: #334155;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 1000px) {
+            .documents {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 190px;
+                padding: 15px;
+            }
+
+            .main {
+                margin-left: 190px;
+                padding: 20px;
+            }
+
+            .documents {
+                grid-template-columns: 1fr;
+            }
+
+            .top-section {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="logo">LifeGPS</div>
+        <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="documents.html" class="nav-item active">📄 Documents</a>
+        <a href="life-events.html" class="nav-item">🗓️ Life Events</a>
+        <a href="ai-assistant.html" class="nav-item">🤖 AI Assistant</a>
+        <a href="reminders.html" class="nav-item">⏰ Reminders</a>
+        <a href="profile.html" class="nav-item">👤 Profile</a>
+    </aside>
+
+    <main class="main">
+        <div class="top-section">
+            <div>
+                <h1>My Documents</h1>
+                <p>Manage your important documents in one secure place.</p>
+            </div>
+            <button class="upload-btn" id="showFormBtn" type="button">
+                ＋ Add Document
+            </button>
+        </div>
+
+        <p id="message" role="status" aria-live="polite">
+            Loading your documents...
+        </p>
+
+        <section class="form-panel" id="documentFormPanel">
+            <h2 id="formTitle">Add a Document</h2>
+
+            <form id="documentForm">
+                <label for="documentName">Document name</label>
+                <input
+                    class="form-input"
+                    id="documentName"
+                    placeholder="e.g. Passport"
+                    required
+                    maxlength="150"
+                >
+
+                <label for="category">Category</label>
+                <select class="form-input" id="category" required>
+                    <option value="">Select a category</option>
+                    <option value="Identity">Identity</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Insurance">Insurance</option>
+                    <option value="Education">Education</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label for="expiryDate">Expiry date (optional)</label>
+                <input class="form-input" type="date" id="expiryDate">
+
+                <div id="fileSection">
+                    <label for="documentFile">Choose document file</label>
+                    <input
+                        class="form-input"
+                        type="file"
+                        id="documentFile"
+                        accept=".pdf,.png,.jpg,.jpeg"
+                    >
+                    <p class="help-text">
+                        Accepted formats: PDF, PNG, JPG and JPEG.
+                        Maximum size: 10 MB. A file is required when adding
+                        a new document. Editing keeps the existing file.
+                    </p>
+                </div>
+
+                <div class="form-actions">
+                    <button class="save-btn" id="saveBtn" type="submit">
+                        Upload and Save
+                    </button>
+                    <button class="cancel-btn" id="cancelBtn" type="button">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <input
+            type="text"
+            class="search-box"
+            id="searchBox"
+            placeholder="🔍 Search your documents..."
+        >
+
+        <div class="categories" id="categories">
+            <button type="button" class="category active" data-category="All">All</button>
+            <button type="button" class="category" data-category="Identity">Identity</button>
+            <button type="button" class="category" data-category="Finance">Finance</button>
+            <button type="button" class="category" data-category="Insurance">Insurance</button>
+            <button type="button" class="category" data-category="Education">Education</button>
+            <button type="button" class="category" data-category="Travel">Travel</button>
+            <button type="button" class="category" data-category="Other">Other</button>
+        </div>
+
+        <div class="documents" id="documentsList"></div>
+    </main>
+
+    <script>
+        const API_URL = "http://localhost:8080/api/documents";
+
+        const formPanel = document.getElementById("documentFormPanel");
+        const documentForm = document.getElementById("documentForm");
+        const documentsList = document.getElementById("documentsList");
+        const message = document.getElementById("message");
+        const searchBox = document.getElementById("searchBox");
+        const saveBtn = document.getElementById("saveBtn");
+        const formTitle = document.getElementById("formTitle");
+        const documentFile = document.getElementById("documentFile");
+
+        let documents = [];
+        let selectedCategory = "All";
+        let editingDocumentId = null;
+
+        function getToken() {
+            return localStorage.getItem("token");
+        }
+
+        async function apiRequest(url, options = {}) {
+            const token = getToken();
+
+            if (!token) {
+                window.location.href = "login.html";
+                throw new Error("Please log in first.");
+            }
+
+            const headers = {
+                "Authorization": "Bearer " + token,
+                ...(options.headers || {})
+            };
+
+            if (!(options.body instanceof FormData) && options.body) {
+                headers["Content-Type"] = "application/json";
+            }
+
+            const response = await fetch(url, {
+                ...options,
+                headers
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                throw new Error(
+                    "Access denied. Please sign in again if your session expired."
+                );
+            }
+
+            if (!response.ok) {
+                const text = await response.text();
+                let detail = text;
+
+                try {
+                    const data = JSON.parse(text);
+                    detail = data.detail || data.message || data.error || text;
+                } catch (error) {
+                    // Use the plain response text when it is not JSON.
+                }
+
+                throw new Error(
+                    detail || "Request failed with status " + response.status
+                );
+            }
+
+            if (response.status === 204) {
+                return null;
+            }
+
+            const text = await response.text();
+            return text ? JSON.parse(text) : null;
+        }
+
+        function getIcon(category) {
+            const icons = {
+                Identity: "🪪",
+                Finance: "💳",
+                Insurance: "🛡️",
+                Education: "🎓",
+                Travel: "✈️",
+                Other: "📄"
+            };
+
+            return icons[category] || "📄";
+        }
+
+        function getStatus(doc) {
+            if (!doc.expiryDate) {
+                return {
+                    label: doc.status || "Active",
+                    className: "valid"
+                };
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const expiry = new Date(doc.expiryDate + "T00:00:00");
+            const days = Math.ceil((expiry - today) / 86400000);
+
+            if (days < 0) {
+                return { label: "Expired", className: "expired" };
+            }
+
+            if (days <= 30) {
+                return {
+                    label: days === 0 ? "Expires Today" : "Expiring Soon",
+                    className: "expiring"
+                };
+            }
+
+            return { label: "Valid", className: "valid" };
+        }
+
+        function createButton(label, className, onClick) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = className;
+            button.textContent = label;
+            button.addEventListener("click", onClick);
+            return button;
+        }
+
+        function renderDocuments() {
+            const query = searchBox.value.trim().toLowerCase();
+
+            const filtered = documents.filter(doc => {
+                const matchesSearch =
+                    (doc.documentName || "").toLowerCase().includes(query) ||
+                    (doc.category || "").toLowerCase().includes(query);
+
+                const matchesCategory =
+                    selectedCategory === "All" ||
+                    doc.category === selectedCategory;
+
+                return matchesSearch && matchesCategory;
+            });
+
+            documentsList.replaceChildren();
+
+            if (filtered.length === 0) {
+                const empty = document.createElement("p");
+                empty.textContent = documents.length === 0
+                    ? "No documents saved yet. Click Add Document to get started."
+                    : "No documents match your search or category.";
+
+                documentsList.appendChild(empty);
+                return;
+            }
+
+            filtered.forEach(doc => {
+                const card = document.createElement("article");
+                card.className = "document-card";
+
+                const icon = document.createElement("div");
+                icon.className = "document-icon";
+                icon.textContent = getIcon(doc.category);
+
+                const title = document.createElement("h3");
+                title.textContent = doc.documentName || "Untitled document";
+
+                const category = document.createElement("p");
+                category.textContent = "Category: " + (doc.category || "Other");
+
+                const uploaded = document.createElement("p");
+                uploaded.textContent = "Added: " + (doc.uploadDate || "Unknown");
+
+                card.append(icon, title, category, uploaded);
+
+                if (doc.expiryDate) {
+                    const expiry = document.createElement("p");
+                    expiry.textContent = "Expires: " + doc.expiryDate;
+                    card.appendChild(expiry);
+                }
+
+                const status = getStatus(doc);
+                const badge = document.createElement("span");
+                badge.className = "status " + status.className;
+                badge.textContent = status.label;
+                card.appendChild(badge);
+
+                const details = createButton("View Details", "view-btn", () => {
+                    alert([
+                        "Document: " + (doc.documentName || "Unknown"),
+                        "Category: " + (doc.category || "Other"),
+                        "Added: " + (doc.uploadDate || "Unknown"),
+                        "Expiry: " + (doc.expiryDate || "Not specified"),
+                        "Status: " + status.label,
+                        "File attached: " + (doc.filePath ? "Yes" : "No")
+                    ].join("\n"));
+                });
+                card.appendChild(details);
+
+                if (doc.filePath) {
+                    const download = createButton(
+                        "Download File",
+                        "download-btn",
+                        () => downloadDocument(doc.id, doc.documentName)
+                    );
+                    card.appendChild(download);
+                }
+
+                const edit = createButton(
+                    "Edit Document",
+                    "edit-btn",
+                    () => startEditing(doc)
+                );
+                card.appendChild(edit);
+
+                const remove = createButton(
+                    "Delete Document",
+                    "delete-btn",
+                    () => deleteDocument(doc)
+                );
+                card.appendChild(remove);
+
+                documentsList.appendChild(card);
+            });
+        }
+
+        async function loadDocuments() {
+            message.textContent = "Loading your documents...";
+
+            try {
+                const result = await apiRequest(API_URL);
+                documents = Array.isArray(result) ? result : [];
+                message.textContent = "Your saved documents";
+                renderDocuments();
+            } catch (error) {
+                message.textContent = "Could not load documents: " + error.message;
+            }
+        }
+
+        function openAddForm() {
+            editingDocumentId = null;
+            documentForm.reset();
+
+            formTitle.textContent = "Add a Document";
+            saveBtn.textContent = "Upload and Save";
+            documentFile.required = true;
+            documentFile.disabled = false;
+
+            formPanel.style.display = "block";
+            document.getElementById("documentName").focus();
+        }
+
+        function startEditing(doc) {
+            editingDocumentId = doc.id;
+            documentForm.reset();
+
+            document.getElementById("documentName").value =
+                doc.documentName || "";
+
+            document.getElementById("category").value =
+                doc.category || "";
+
+            document.getElementById("expiryDate").value =
+                doc.expiryDate || "";
+
+            // Editing metadata keeps the already uploaded file.
+            documentFile.required = false;
+            documentFile.value = "";
+            documentFile.disabled = true;
+
+            formTitle.textContent = "Edit Document";
+            saveBtn.textContent = "Save Changes";
+            formPanel.style.display = "block";
+
+            message.textContent =
+                "Editing " + (doc.documentName || "document") +
+                ". The existing file will be kept.";
+
+            document.getElementById("documentName").focus();
+            formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        async function deleteDocument(doc) {
+            const confirmed = confirm(
+                'Delete "' + (doc.documentName || "this document") +
+                '" permanently?\n\nThis will remove its database record and, ' +
+                "if present, its stored file. This action cannot be undone."
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            message.textContent = "Deleting document...";
+
+            try {
+                await apiRequest(
+                    API_URL + "/" + encodeURIComponent(doc.id),
+                    { method: "DELETE" }
+                );
+
+                if (String(editingDocumentId) === String(doc.id)) {
+                    cancelForm();
+                }
+
+                message.textContent = "Document deleted successfully.";
+                await loadDocuments();
+                message.textContent = "Document deleted successfully.";
+            } catch (error) {
+                message.textContent = "Delete failed: " + error.message;
+            }
+        }
+
+        async function downloadDocument(id, name) {
+            try {
+                const token = getToken();
+
+                if (!token) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                message.textContent = "Preparing your download...";
+
+                const response = await fetch(
+                    API_URL + "/" + encodeURIComponent(id) + "/file",
+                    {
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Unable to download this file.");
+                }
+
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                link.href = objectUrl;
+
+                const safeName = (name || "LifeGPS-document")
+                    .replace(/[\\/:*?"<>|]/g, "_");
+
+                link.download = safeName;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+                message.textContent = "Download started.";
+
+            } catch (error) {
+                message.textContent = "Download failed: " + error.message;
+            }
+        }
+
+        function cancelForm() {
+            documentForm.reset();
+            editingDocumentId = null;
+            documentFile.required = true;
+            documentFile.disabled = false;
+            formTitle.textContent = "Add a Document";
+            saveBtn.textContent = "Upload and Save";
+            formPanel.style.display = "none";
+        }
+
+        document.getElementById("showFormBtn").addEventListener("click", openAddForm);
+
+        document.getElementById("cancelBtn").addEventListener("click", () => {
+            cancelForm();
+            message.textContent = "Form cancelled.";
+        });
+
+        documentForm.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const documentName =
+                document.getElementById("documentName").value.trim();
+
+            const category =
+                document.getElementById("category").value;
+
+            const expiryDate =
+                document.getElementById("expiryDate").value;
+
+            if (!documentName || !category) {
+                message.textContent = "Document name and category are required.";
+                return;
+            }
+
+            if (editingDocumentId !== null) {
+                // Update existing metadata. Do not replace the stored file.
+                saveBtn.disabled = true;
+                saveBtn.textContent = "Saving...";
+                message.textContent = "Saving your changes...";
+
+                const payload = {
+                    documentName,
+                    category,
+                    expiryDate: expiryDate || null
+                };
+
+                try {
+                    await apiRequest(
+                        API_URL + "/" + encodeURIComponent(editingDocumentId),
+                        {
+                            method: "PUT",
+                            body: JSON.stringify(payload)
+                        }
+                    );
+
+                    cancelForm();
+                    message.textContent = "Document updated successfully.";
+                    await loadDocuments();
+                    message.textContent = "Document updated successfully.";
+
+                } catch (error) {
+                    message.textContent = "Update failed: " + error.message;
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = "Upload and Save";
+                }
+
+                return;
+            }
+
+            const file = documentFile.files[0];
+
+            if (!file) {
+                message.textContent = "Please choose a document file.";
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                message.textContent = "The selected file must be 10 MB or smaller.";
+                return;
+            }
+
+            const allowedExtensions = /\.(pdf|png|jpe?g)$/i;
+
+            if (!allowedExtensions.test(file.name)) {
+                message.textContent = "Only PDF, PNG, JPG, and JPEG files are allowed.";
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Uploading...";
+            message.textContent = "Uploading your document...";
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("documentName", documentName);
+            formData.append("category", category);
+
+            if (expiryDate) {
+                formData.append("expiryDate", expiryDate);
+            }
+
+            try {
+                await apiRequest(API_URL + "/upload", {
+                    method: "POST",
+                    body: formData
+                });
+
+                cancelForm();
+                message.textContent = "Document and file uploaded successfully.";
+                await loadDocuments();
+                message.textContent = "Document and file uploaded successfully.";
+
+            } catch (error) {
+                message.textContent = "Upload failed: " + error.message;
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = editingDocumentId === null
+                    ? "Upload and Save"
+                    : "Save Changes";
+            }
+        });
+
+        searchBox.addEventListener("input", renderDocuments);
+
+        document.querySelectorAll(".category").forEach(button => {
+            button.addEventListener("click", () => {
+                document.querySelectorAll(".category").forEach(item => {
+                    item.classList.remove("active");
+                });
+
+                button.classList.add("active");
+                selectedCategory = button.dataset.category;
+                renderDocuments();
+            });
+        });
+
+        loadDocuments();
+    </script>
+</body>
+</html>
