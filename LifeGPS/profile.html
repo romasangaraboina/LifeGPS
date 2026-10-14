@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeGPS - Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',Arial,sans-serif}
+body{background:#f5f8ff;color:#172033;font-size:16px}
+.sidebar{width:255px;height:100vh;background:linear-gradient(180deg,#2563eb,#167acb);color:white;padding:28px 18px;position:fixed;inset:0 auto 0 0;overflow-y:auto}
+.logo{font-size:29px;font-weight:700;margin-bottom:42px;padding-left:10px}
+.nav-item{display:block;text-decoration:none;color:white;padding:15px;margin-bottom:9px;border-radius:12px;font-size:15px;transition:background .2s}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.19)}
+.main{margin-left:255px;width:calc(100% - 255px);padding:42px;max-width:1600px}
+.header{margin-bottom:28px}
+.header h1{font-size:34px;line-height:1.3;margin-bottom:10px}
+.header p{color:#64748b;font-size:16px;line-height:1.8}
+.message{padding:17px 20px;background:#eaf2ff;color:#1d4ed8;border-radius:12px;margin-bottom:28px;font-size:15px;line-height:1.8}
+.profile-card,.settings,.summary-card{background:white;border-radius:18px;box-shadow:0 7px 23px rgba(30,64,175,.07)}
+.profile-card{padding:32px;margin-bottom:30px}
+.profile-top{display:flex;align-items:center;gap:20px;padding-bottom:26px;border-bottom:1px solid #e5eaf5}
+.avatar{width:82px;height:82px;min-width:82px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:31px;font-weight:700}
+.profile-top h2{font-size:23px;margin-bottom:7px;overflow-wrap:anywhere}
+.profile-top p{color:#64748b;font-size:15px;line-height:1.7}
+.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px;margin-top:25px}
+.info-item{background:#f8faff;padding:21px;border-radius:13px;overflow-wrap:anywhere}
+.info-item span{display:block;color:#64748b;font-size:14px;margin-bottom:8px}
+.info-item strong{font-size:16px;overflow-wrap:anywhere}
+.profile-form{margin-top:29px;padding-top:27px;border-top:1px solid #e5eaf5}
+.profile-form h3{font-size:21px;margin-bottom:22px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:15px;margin-bottom:9px;font-weight:600}
+.form-group input{width:100%;padding:14px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;outline:none;background:white}
+.form-group input:focus{border-color:#2563eb;box-shadow:0 0 0 3px #dbeafe}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-bottom:30px}
+.summary-card{padding:27px}
+.summary-card h2{color:#2563eb;font-size:32px;margin-bottom:8px}
+.summary-card p{color:#64748b;font-size:15px;line-height:1.6}
+.settings{padding:30px}
+.settings h2{font-size:24px;margin-bottom:12px}
+.setting{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:23px 0;border-bottom:1px solid #e5eaf5}
+.setting:last-of-type{border-bottom:none}
+.setting strong{font-size:16px}
+.setting p{color:#64748b;font-size:14px;line-height:1.8;margin-top:7px}
+.toggle{width:52px;height:29px;min-width:52px;border:0;border-radius:20px;background:#cbd5e1;position:relative;cursor:pointer;transition:background .2s}
+.toggle:after{content:"";width:23px;height:23px;background:white;border-radius:50%;position:absolute;left:3px;top:3px;transition:transform .2s}
+.toggle[aria-checked="true"]{background:#2563eb}
+.toggle[aria-checked="true"]:after{transform:translateX(23px)}
+.btn{border:0;border-radius:10px;padding:13px 20px;cursor:pointer;font-size:15px;font-weight:600;margin-top:20px}
+.save-btn{background:#2563eb;color:white}
+.save-btn:hover{background:#1d4ed8}
+.reset-btn{background:#fee2e2;color:#dc2626}
+.reset-btn:hover{background:#fecaca}
+.small-note{color:#64748b;font-size:13px;line-height:1.8;margin-top:15px}
+button:focus-visible,input:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}
+@media(max-width:1050px){.main{padding:30px}.summary{gap:14px}.summary-card{padding:21px}}
+@media(max-width:800px){.sidebar{width:210px;padding:22px 12px}.main{margin-left:210px;width:calc(100% - 210px);padding:25px 18px}.summary{grid-template-columns:1fr}.info-grid,.form-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.sidebar{width:68px;padding:20px 7px}.logo{font-size:0;text-align:center;padding:0}.logo:after{content:"L";font-size:25px}.nav-item{font-size:0;text-align:center;padding:14px 4px}.nav-item::first-letter{font-size:20px}.main{margin-left:68px;width:calc(100% - 68px);padding:22px 12px}.header h1{font-size:27px}.header p{font-size:14px}.profile-card,.settings{padding:19px}.profile-top{align-items:flex-start;gap:13px}.avatar{width:56px;height:56px;min-width:56px;font-size:23px}.profile-top h2{font-size:19px}.setting{align-items:flex-start;gap:12px}.setting strong{font-size:14px}.setting p{font-size:13px}.summary-card{padding:20px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo">LifeGPS</div>
+  <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+  <a href="documents.html" class="nav-item">📄 Documents</a>
+  <a href="life-events.html" class="nav-item">🗓️ Life Events</a>
+  <a href="ai-assistant.html" class="nav-item">🤖 AI Assistant</a>
+  <a href="reminders.html" class="nav-item">⏰ Reminders</a>
+  <a href="profile.html" class="nav-item active">👤 Profile</a>
+</aside>
+
+<main class="main">
+  <header class="header">
+    <h1>My Profile 👤</h1>
+    <p>Manage your LifeGPS profile and preferences.</p>
+  </header>
+
+  <div id="pageMessage" class="message" role="status" aria-live="polite">Loading your profile...</div>
+
+  <section class="profile-card">
+    <div class="profile-top">
+      <div class="avatar" id="avatar">👤</div>
+      <div>
+        <h2 id="displayName">LifeGPS User</h2>
+        <p>Your personal life management account</p>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item"><span>Full Name</span><strong id="fullName">Not provided</strong></div>
+      <div class="info-item"><span>Email</span><strong id="email">Not provided</strong></div>
+      <div class="info-item"><span>Phone</span><strong id="phone">Not provided</strong></div>
+      <div class="info-item"><span>Account Status</span><strong id="accountStatus">Active</strong></div>
+    </div>
+
+    <form id="profileForm" class="profile-form">
+      <h3>✏️ Edit Profile</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nameInput">Full Name</label>
+          <input type="text" id="nameInput" maxlength="100" placeholder="Enter your name" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="emailInput">Email Address</label>
+          <input type="email" id="emailInput" maxlength="150" placeholder="Enter your email" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="phoneInput">Phone Number</label>
+          <input type="tel" id="phoneInput" maxlength="25" placeholder="Enter your phone number" autocomplete="tel">
+        </div>
+      </div>
+      <button type="submit" class="btn save-btn">Save Profile</button>
+    </form>
+  </section>
+
+  <section class="summary">
+    <div class="summary-card"><h2 id="documentCount">0</h2><p>Saved Documents</p></div>
+    <div class="summary-card"><h2 id="lifeEventCount">0</h2><p>Saved Life Events</p></div>
+    <div class="summary-card"><h2 id="reminderCount">0</h2><p>Pending Reminders</p></div>
+  </section>
+
+  <section class="settings">
+    <h2>⚙️ Preferences</h2>
+    <div class="setting">
+      <div>
+        <strong>Deadline Notifications</strong>
+        <p>Save your preference for deadline alerts.</p>
+      </div>
+      <button class="toggle" id="deadlineToggle" type="button" role="switch" aria-checked="true" aria-label="Deadline notifications"></button>
+    </div>
+    <div class="setting">
+      <div>
+        <strong>Document Expiry Alerts</strong>
+        <p>Save your preference for document expiry alerts.</p>
+      </div>
+      <button class="toggle" id="expiryToggle" type="button" role="switch" aria-checked="true" aria-label="Document expiry alerts"></button>
+    </div>
+    <p class="small-note">Preferences are saved to your account. Email and SMS delivery is not configured yet.</p>
+    <button class="btn reset-btn" id="resetBtn" type="button">Reset Preferences</button>
+  </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+"use strict";
+if (!LifeGPS.requireLogin()) throw new Error("Not logged in");
+
+function setMessage(text,error=false){
+  const element=document.getElementById("pageMessage");
+  element.textContent=text;
+  element.style.background=error?"#fef2f2":"#eaf2ff";
+  element.style.color=error?"#b91c1c":"#1d4ed8";
+}
+let currentProfile=null;
+
+function showProfile(profile){
+  currentProfile=profile;
+  document.getElementById("nameInput").value=profile.name||"";
+  document.getElementById("emailInput").value=profile.email||"";
+  document.getElementById("emailInput").readOnly=true;
+  document.getElementById("phoneInput").value=profile.phone||"";
+  document.getElementById("displayName").textContent=profile.name||"LifeGPS User";
+  document.getElementById("fullName").textContent=profile.name||"Not provided";
+  document.getElementById("email").textContent=profile.email||"Not provided";
+  document.getElementById("phone").textContent=profile.phone||"Not provided";
+  document.getElementById("accountStatus").textContent=profile.accountStatus||"Active";
+  const name=(profile.name||"").trim();
+  document.getElementById("avatar").textContent=name?name.charAt(0).toUpperCase():"👤";
+  document.getElementById("deadlineToggle").setAttribute("aria-checked",String(profile.deadlineNotifications!==false));
+  document.getElementById("expiryToggle").setAttribute("aria-checked",String(profile.expiryAlerts!==false));
+  const stored=LifeGPS.user()||{};
+  localStorage.setItem("lifegps_user",JSON.stringify({...stored,name:profile.name,phone:profile.phone}));
+}
+async function loadProfile(){
+  try{showProfile(await LifeGPS.getProfile());setMessage("Your profile is stored in your LifeGPS account.");}
+  catch(err){setMessage(err.message,true);}
+}
+async function loadCounts(){
+  try{
+    const [docs,events,reminders]=await Promise.all([LifeGPS.getDocuments(),LifeGPS.getLifeEvents(),LifeGPS.getReminders()]);
+    document.getElementById("documentCount").textContent=docs.length;
+    document.getElementById("lifeEventCount").textContent=events.length;
+    document.getElementById("reminderCount").textContent=reminders.filter(r=>r.status!=="Completed").length;
+  }catch(err){setMessage(err.message,true);}
+}
+document.getElementById("profileForm").addEventListener("submit",async function(event){
+  event.preventDefault();
+  const btn=this.querySelector('button[type="submit"]');btn.disabled=true;
+  try{
+    const updated=await LifeGPS.updateProfile({
+      name:document.getElementById("nameInput").value.trim(),
+      phone:document.getElementById("phoneInput").value.trim()
+    });
+    showProfile(updated);
+    setMessage("Profile saved successfully.");
+  }catch(err){setMessage(err.message,true);}
+  finally{btn.disabled=false;}
+});
+function setupPreference(buttonId,field){
+  const button=document.getElementById(buttonId);
+  button.onclick=async function(){
+    const next=button.getAttribute("aria-checked")!=="true";
+    button.setAttribute("aria-checked",String(next));
+    try{
+      const updated=await LifeGPS.updateProfile({name:currentProfile.name,phone:currentProfile.phone,[field]:next});
+      showProfile(updated);
+      setMessage("Preference updated.");
+    }catch(err){
+      button.setAttribute("aria-checked",String(!next));
+      setMessage(err.message,true);
+    }
+  };
+}
+document.getElementById("resetBtn").addEventListener("click",async function(){
+  if(!confirm("Reset your notification preferences to the defaults?"))return;
+  try{
+    const updated=await LifeGPS.updateProfile({name:currentProfile.name,phone:currentProfile.phone,deadlineNotifications:true,expiryAlerts:true});
+    showProfile(updated);
+    setMessage("Preferences reset to defaults.");
+  }catch(err){setMessage(err.message,true);}
+});
+setupPreference("deadlineToggle","deadlineNotifications");
+setupPreference("expiryToggle","expiryAlerts");
+loadProfile();
+loadCounts();
+
+</script>
+
+</body>
+</html>

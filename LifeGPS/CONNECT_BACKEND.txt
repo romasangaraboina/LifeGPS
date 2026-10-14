@@ -1,0 +1,6 @@
+LifeGPS frontend - fully connected to the Spring Boot backend.
+
+1. Start MySQL, then start the backend (see lifegps-backend/BACKEND_SETUP.md).
+2. Open this folder in VS Code and run index.html with "Live Server".
+3. Sign up -> Log in -> use Documents, Life Events, Reminders, AI Assistant, Profile.
+4. Backend URL is set in js/config.js (change it when you deploy).

@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGPS | AI Assistant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', Arial, sans-serif; }
+        body { background: #f4f8ff; color: #172033; }
+        .layout { min-height: 100vh; }
+        .sidebar { position: fixed; inset: 0 auto 0 0; width: 250px; background: linear-gradient(180deg,#2563eb,#4f8dfd); color: white; padding: 28px 20px; }
+        .logo { font-size: 30px; font-weight: 700; margin: 0 0 40px 8px; }
+        .nav-item { display: block; color: white; text-decoration: none; padding: 14px 16px; margin-bottom: 8px; border-radius: 10px; font-size: 14px; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.2); }
+        .main { margin-left: 250px; padding: 38px; min-height: 100vh; }
+        .ai-container { max-width: 1050px; margin: auto; }
+        .header { margin-bottom: 24px; }
+        .header h1 { font-size: 32px; margin-bottom: 7px; }
+        .header p { color: #64748b; }
+        .demo-tag { display: inline-block; margin-top: 10px; padding: 5px 10px; border-radius: 20px; background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: 700; }
+        .welcome-card { background: linear-gradient(135deg,#2563eb,#4f8dfd); color: white; border-radius: 18px; padding: 28px; margin-bottom: 22px; box-shadow: 0 10px 28px rgba(37,99,235,.16); }
+        .welcome-card h2 { margin-bottom: 9px; font-size: 23px; }
+        .welcome-card p { line-height: 1.7; font-size: 14px; }
+        .chat-box { background: white; border-radius: 18px; padding: 24px; box-shadow: 0 8px 24px rgba(37,99,235,.07); }
+        .chat-heading { font-size: 19px; margin-bottom: 6px; }
+        .chat-subtitle { color: #64748b; font-size: 13px; margin-bottom: 20px; }
+        .conversation { display: flex; flex-direction: column; gap: 14px; min-height: 180px; max-height: 430px; overflow-y: auto; padding: 4px 2px 15px; }
+        .message { max-width: 82%; padding: 13px 16px; border-radius: 14px; line-height: 1.7; font-size: 14px; overflow-wrap: anywhere; white-space: pre-wrap; }
+        .ai-message { background: #eff6ff; color: #334155; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .user-message { background: #2563eb; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .quick-actions { display: flex; gap: 9px; flex-wrap: wrap; margin: 18px 0; }
+        .quick-btn { border: 1px solid #dbeafe; background: #f8faff; color: #2563eb; padding: 10px 13px; border-radius: 22px; cursor: pointer; font-size: 12px; }
+        .quick-btn:hover { background: #dbeafe; }
+        .input-area { display: flex; gap: 10px; border-top: 1px solid #edf2f7; padding-top: 18px; }
+        .input-area input { min-width: 0; flex: 1; padding: 13px 14px; border: 1px solid #dbe3f0; border-radius: 10px; font-size: 14px; }
+        .input-area input:focus { outline: 2px solid #bfdbfe; border-color: #2563eb; }
+        .send-btn { background: #2563eb; color: white; border: none; padding: 0 23px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .send-btn:hover { background: #1d4ed8; }
+        .capabilities { margin-top: 28px; }
+        .capabilities h2 { font-size: 22px; margin-bottom: 16px; }
+        .capability-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 15px; }
+        .capability-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 6px 20px rgba(37,99,235,.06); border: 1px solid #edf2fc; }
+        .capability-card .icon { font-size: 27px; margin-bottom: 11px; }
+        .capability-card h3 { font-size: 14px; margin-bottom: 8px; }
+        .capability-card p { color: #64748b; font-size: 12px; line-height: 1.6; }
+        .disclaimer { margin-top: 15px; color: #64748b; font-size: 12px; line-height: 1.6; }
+        @media(max-width:1100px) { .capability-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+        @media(max-width:850px) {
+            .sidebar { position: static; width: 100%; height: auto; padding: 18px; }
+            .logo { margin: 0 0 14px; }
+            .sidebar nav { display: flex; flex-wrap: wrap; gap: 5px; }
+            .nav-item { padding: 10px; margin: 0; }
+            .main { margin-left: 0; padding: 22px; }
+        }
+        @media(max-width:550px) {
+            .main { padding: 15px; }
+            .header h1 { font-size: 26px; }
+            .welcome-card, .chat-box { padding: 18px; }
+            .capability-grid { grid-template-columns: 1fr; }
+            .message { max-width: 95%; }
+            .input-area { flex-direction: column; }
+            .input-area input, .send-btn { min-height: 46px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">LifeGPS</div>
+            <nav aria-label="Main navigation">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <a href="documents.html" class="nav-item">📄 Documents</a>
+                <a href="life-events.html" class="nav-item">🗓️ Life Events</a>
+                <a href="ai-assistant.html" class="nav-item active" aria-current="page">🤖 AI Assistant</a>
+                <a href="reminders.html" class="nav-item">⏰ Reminders</a>
+                <a href="profile.html" class="nav-item">👤 Profile</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="ai-container">
+                <header class="header">
+                    <h1>AI Assistant 🤖</h1>
+                    <p>Your personal guide for preparing for life's important moments.</p>
+                    <span class="demo-tag">CONNECTED</span>
+                </header>
+
+                <section class="welcome-card">
+                    <h2>How can I help you today?</h2>
+                    <p>
+                        Ask about document requirements, life-event preparation,
+                        checklists, or important deadlines. Try one of the quick
+                        questions below. Answers use your saved documents and life events.
+                    </p>
+                </section>
+
+                <section class="chat-box" aria-label="LifeGPS assistant chat">
+                    <h2 class="chat-heading">LifeGPS Chat</h2>
+                    <p class="chat-subtitle">Explore sample guidance and preparation tips.</p>
+
+                    <div class="conversation" id="conversation" aria-live="polite">
+                        <div class="message ai-message">
+                            👋 Hello! Welcome to LifeGPS.
+
+                            I can share general preparation tips for important
+                            life events and help you understand common document
+                            requirements. Choose a quick question or type below!
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button type="button" class="quick-btn" data-question="What documents may I need for foreign travel?">✈️ Foreign Travel</button>
+                        <button type="button" class="quick-btn" data-question="How can I prepare for higher studies?">🎓 Higher Studies</button>
+                        <button type="button" class="quick-btn" data-question="Help me plan a marriage checklist">💍 Marriage Checklist</button>
+                        <button type="button" class="quick-btn" data-question="How should I track document expiry dates?">⏰ Expiry Dates</button>
+                        <button type="button" class="quick-btn" data-question="How can I prepare to buy a house?">🏠 Buying a House</button>
+                    </div>
+
+                    <form class="input-area" id="chatForm">
+                        <input
+                            type="text"
+                            id="userInput"
+                            placeholder="Ask LifeGPS a question..."
+                            aria-label="Your question"
+                            maxlength="500"
+                            autocomplete="off"
+                            required
+                        >
+                        <button class="send-btn" type="submit">Send ➤</button>
+                    </form>
+
+                    <p class="disclaimer">
+                        Note: replies are rule-based guidance from LifeGPS, not live AI-generated advice.
+                        Verify official document requirements with the relevant authority.
+                    </p>
+                </section>
+
+                <section class="capabilities">
+                    <h2>What LifeGPS Helps You Explore</h2>
+                    <div class="capability-grid">
+                        <article class="capability-card">
+                            <div class="icon">📄</div>
+                            <h3>Document Planning</h3>
+                            <p>Explore common documents needed for different life events.</p>
+                        </article>
+                        <article class="capability-card">
+                            <div class="icon">📅</div>
+                            <h3>Deadline Awareness</h3>
+                            <p>Learn ways to track expiry dates and important deadlines.</p>
+                        </article>
+                        <article class="capability-card">
+                            <div class="icon">📝</div>
+                            <h3>Preparation Checklists</h3>
+                            <p>Break a major milestone into smaller tasks to prepare for.</p>
+                        </article>
+                        <article class="capability-card">
+                            <div class="icon">🧭</div>
+                            <h3>Life Event Guidance</h3>
+                            <p>Explore practical starting points for important decisions.</p>
+                        </article>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+
+if (!LifeGPS.requireLogin()) throw new Error("Not logged in");
+const conversation = document.getElementById("conversation");
+const input = document.getElementById("userInput");
+const chatForm = document.getElementById("chatForm");
+function addMessage(text, sender) {
+    const message = document.createElement("div");
+    message.className = "message " + sender;
+    message.textContent = text;
+    conversation.appendChild(message);
+    conversation.scrollTop = conversation.scrollHeight;
+    return message;
+}
+async function askQuestion(question) {
+    const cleanQuestion = question.trim();
+    if (!cleanQuestion) return;
+    addMessage(cleanQuestion, "user-message");
+    input.value = "";
+    const pending = addMessage("Thinking...", "ai-message");
+    try {
+        const result = await LifeGPS.ask(cleanQuestion);
+        pending.textContent = result.answer;
+    } catch (err) {
+        pending.textContent = "Sorry, I couldn't get an answer: " + err.message;
+    }
+    conversation.scrollTop = conversation.scrollHeight;
+    input.focus();
+}
+chatForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    askQuestion(input.value);
+});
+document.querySelectorAll(".quick-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        askQuestion(button.dataset.question);
+    });
+});
+
+</script>
+
+</body>
+</html>

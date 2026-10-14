@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGPS | My Documents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: #f4f7fc; color: #172033; font-size: 16px; line-height: 1.7; }
+
+        .sidebar { position: fixed; inset: 0 auto 0 0; width: 255px; background: linear-gradient(180deg,#2563eb,#4f8dfd); color: white; padding: 30px 20px; }
+        .logo { font-size: 30px; font-weight: 700; margin: 0 0 42px 8px; }
+        .nav-item { display: block; color: white; text-decoration: none; padding: 14px 16px; margin-bottom: 9px; border-radius: 11px; font-size: 16px; transition: background .2s; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.2); }
+        .main { margin-left: 255px; padding: 42px; max-width: 1700px; }
+
+        .top-section { display: flex; justify-content: space-between; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 28px; }
+        h1 { font-size: 34px; line-height: 1.35; margin-bottom: 8px; }
+        h2 { font-size: 25px; line-height: 1.4; margin-bottom: 18px; }
+        h3 { font-size: 20px; line-height: 1.5; }
+        .muted, .document-card p { color: #64748b; }
+        .muted { font-size: 17px; }
+
+        .upload-btn, .save-btn { background: #2563eb; color: white; border: 0; padding: 14px 21px; border-radius: 11px; cursor: pointer; font-size: 15px; font-weight: 600; }
+        .upload-btn:hover, .save-btn:hover { background: #1d4ed8; }
+        button:disabled { opacity: .6; cursor: not-allowed; }
+
+        .demo-tag { display: inline-block; margin-top: 13px; padding: 6px 12px; border-radius: 20px; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 700; }
+        #message { margin-bottom: 24px; color: #475569; line-height: 1.7; font-size: 15px; padding: 15px 18px; border-radius: 12px; background: #eff6ff; }
+
+        .panel { background: white; padding: 30px; margin-bottom: 28px; border-radius: 18px; box-shadow: 0 8px 24px rgba(37,99,235,.06); }
+        .form-panel { display: none; }
+
+        label { display: block; font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+        .form-input, .search-box { width: 100%; padding: 14px 16px; border: 1px solid #dbe3f0; border-radius: 11px; background: white; font-size: 16px; margin-bottom: 20px; color: #172033; }
+        .form-input:focus, .search-box:focus { outline: 2px solid #bfdbfe; border-color: #2563eb; }
+        .help-text { font-size: 13px; color: #64748b; margin: -10px 0 20px; }
+        .form-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .cancel-btn { border: 1px solid #dbe3f0; background: white; padding: 13px 20px; border-radius: 11px; cursor: pointer; font-size: 15px; }
+
+        .search-box { margin-bottom: 18px; }
+        .categories { display: flex; flex-wrap: wrap; gap: 11px; margin: 8px 0 28px; }
+        .category { padding: 10px 18px; border: 1px solid #dbe3f0; background: white; color: #2563eb; border-radius: 24px; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .category.active { background: #2563eb; color: white; border-color: #2563eb; }
+
+        .documents { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+        .document-card { background: white; border-radius: 18px; padding: 27px; box-shadow: 0 6px 20px rgba(37,99,235,.05); overflow-wrap: anywhere; border: 1px solid #e8eef8; }
+        .document-icon { font-size: 38px; margin-bottom: 15px; }
+        .document-card h3 { margin-bottom: 15px; }
+        .document-card p { font-size: 15px; margin-bottom: 9px; overflow-wrap: anywhere; }
+        .status { display: inline-block; margin: 10px 0 8px; padding: 7px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .valid { background: #dcfce7; color: #15803d; }
+        .expiring { background: #fef3c7; color: #92400e; }
+        .expired { background: #fee2e2; color: #b91c1c; }
+
+        .doc-action { display: block; width: 100%; padding: 12px; margin-top: 11px; border: 0; border-radius: 10px; background: #eff6ff; color: #2563eb; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .doc-action:hover { filter: brightness(.97); }
+        .doc-action.edit { background: #fef3c7; color: #92400e; }
+        .doc-action.delete { background: #fee2e2; color: #b91c1c; }
+
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 48px 25px; background: white; border-radius: 18px; color: #64748b; font-size: 16px; border: 1px solid #e8eef8; }
+
+        @media(min-width: 1450px) { .documents { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+        @media(max-width: 1000px) {
+            .sidebar { position: static; width: 100%; height: auto; padding: 20px; }
+            .logo { margin: 0 0 16px; }
+            .sidebar nav { display: flex; flex-wrap: wrap; gap: 5px; }
+            .nav-item { padding: 10px 13px; margin: 0; }
+            .main { margin-left: 0; padding: 28px; }
+            .documents { grid-template-columns: repeat(2,minmax(0,1fr)); }
+        }
+        @media(max-width: 600px) {
+            .main { padding: 22px 16px; }
+            h1 { font-size: 28px; }
+            h2 { font-size: 23px; }
+            .muted { font-size: 16px; }
+            .documents { grid-template-columns: 1fr; gap: 18px; }
+            .panel { padding: 22px; }
+            .document-card { padding: 23px; }
+            .upload-btn { width: 100%; }
+            .categories { gap: 8px; }
+            .category { padding: 9px 13px; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">LifeGPS</div>
+        <nav aria-label="Main navigation">
+            <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+            <a href="documents.html" class="nav-item active" aria-current="page">📄 Documents</a>
+            <a href="life-events.html" class="nav-item">🗓️ Life Events</a>
+            <a href="ai-assistant.html" class="nav-item">🤖 AI Assistant</a>
+            <a href="reminders.html" class="nav-item">⏰ Reminders</a>
+            <a href="profile.html" class="nav-item">👤 Profile</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="top-section">
+            <div>
+                <h1>My Documents 📁</h1>
+                <p class="muted">Keep your important documents organized and easy to track.</p>
+                
+            </div>
+            <button class="upload-btn" id="showFormBtn" type="button">＋ Add Document</button>
+        </header>
+
+        <p id="message" role="status" aria-live="polite">
+            Your documents are saved securely to your account.
+        </p>
+
+        <section class="panel form-panel" id="documentFormPanel">
+            <h2 id="formTitle">Add a Document</h2>
+            <form id="documentForm">
+                <label for="documentName">Document name</label>
+                <input class="form-input" id="documentName" maxlength="100" placeholder="e.g. Passport" required>
+
+                <label for="category">Category</label>
+                <select class="form-input" id="category" required>
+                    <option value="">Select a category</option>
+                    <option>Identity</option>
+                    <option>Finance</option>
+                    <option>Insurance</option>
+                    <option>Education</option>
+                    <option>Travel</option>
+                    <option>Other</option>
+                </select>
+
+                <label for="expiryDate">Expiry date (optional)</label>
+                <input class="form-input" type="date" id="expiryDate">
+
+                <label for="documentFile">Choose a file (optional)</label>
+                <input class="form-input" type="file" id="documentFile" accept=".pdf,.png,.jpg,.jpeg">
+                <p class="help-text">PDF, PNG, JPG or JPEG. Maximum 10 MB. The file is uploaded and stored on the server.</p>
+
+                <div class="form-actions">
+                    <button class="save-btn" id="saveBtn" type="submit">Save Document</button>
+                    <button class="cancel-btn" id="cancelBtn" type="button">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <section aria-label="Search and filter documents">
+            <input class="search-box" id="searchBox" type="search" placeholder="🔍  Search documents by name or category...">
+            <div class="categories" id="categories">
+                <button class="category active" data-category="All" type="button">All Documents</button>
+                <button class="category" data-category="Identity" type="button">Identity</button>
+                <button class="category" data-category="Finance" type="button">Finance</button>
+                <button class="category" data-category="Insurance" type="button">Insurance</button>
+                <button class="category" data-category="Education" type="button">Education</button>
+                <button class="category" data-category="Travel" type="button">Travel</button>
+                <button class="category" data-category="Other" type="button">Other</button>
+            </div>
+        </section>
+
+        <section class="documents" id="documentsList" aria-label="Your documents"></section>
+    </main>
+
+    <script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+
+if (!LifeGPS.requireLogin()) throw new Error("Not logged in");
+
+const formPanel = document.getElementById("documentFormPanel");
+const form = document.getElementById("documentForm");
+const list = document.getElementById("documentsList");
+const message = document.getElementById("message");
+const searchBox = document.getElementById("searchBox");
+const fileInput = document.getElementById("documentFile");
+const saveBtn = document.getElementById("saveBtn");
+
+let documents = [];
+let selectedCategory = "All";
+let editingId = null;
+
+function say(text, isError) {
+    message.textContent = text;
+    message.style.color = isError ? "#b91c1c" : "";
+}
+
+async function loadDocuments() {
+    list.replaceChildren();
+    say("Loading your documents...");
+    try {
+        documents = await LifeGPS.getDocuments();
+        say("");
+    } catch (err) {
+        documents = [];
+        say(err.message, true);
+    }
+    renderDocuments();
+}
+
+function statusFor(doc) {
+    if (!doc.expiryDate) return { label: "No expiry date", cls: "valid" };
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const expiry = new Date(doc.expiryDate + "T00:00:00");
+    const days = Math.ceil((expiry - today) / 86400000);
+    if (days < 0) return { label: "Expired", cls: "expired" };
+    if (days <= 30) return { label: days === 0 ? "Expires today" : "Expiring soon", cls: "expiring" };
+    return { label: "Valid", cls: "valid" };
+}
+
+function iconFor(category) {
+    return ({ Identity: "🪪", Finance: "💳", Insurance: "🛡️",
+        Education: "🎓", Travel: "✈️", Other: "📄" })[category] || "📄";
+}
+
+function makeButton(label, cls, callback) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "doc-action " + (cls || "");
+    button.textContent = label;
+    button.addEventListener("click", callback);
+    return button;
+}
+
+function renderDocuments() {
+    const query = searchBox.value.trim().toLowerCase();
+    const filtered = documents.filter(doc =>
+        (selectedCategory === "All" || doc.category === selectedCategory) &&
+        ((doc.documentName || "").toLowerCase().includes(query) ||
+         (doc.category || "").toLowerCase().includes(query))
+    );
+
+    list.replaceChildren();
+
+    if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = documents.length
+            ? "No documents match your search. Try another keyword or category."
+            : "📂 No documents yet. Select “Add Document” to save your first one.";
+        list.appendChild(empty);
+        return;
+    }
+
+    filtered.forEach(doc => {
+        const card = document.createElement("article");
+        card.className = "document-card";
+
+        const icon = document.createElement("div");
+        icon.className = "document-icon";
+        icon.textContent = iconFor(doc.category);
+
+        const title = document.createElement("h3");
+        title.textContent = doc.documentName;
+
+        const category = document.createElement("p");
+        category.textContent = "Category: " + doc.category;
+
+        const added = document.createElement("p");
+        added.textContent = "Added: " + (doc.uploadDate || "Not recorded");
+
+        const expiry = document.createElement("p");
+        expiry.textContent = "Expiry: " + (doc.expiryDate || "Not specified");
+
+        const status = statusFor(doc);
+        const badge = document.createElement("span");
+        badge.className = "status " + status.cls;
+        badge.textContent = status.label;
+
+        card.append(icon, title, category, added, expiry, badge);
+
+        if (doc.filePath) {
+            card.appendChild(makeButton("Download File", "", async () => {
+                try { await LifeGPS.downloadDocument(doc.id, doc.documentName + "." + doc.filePath.split(".").pop()); }
+                catch (err) { say(err.message, true); }
+            }));
+        }
+        card.appendChild(makeButton("Edit Document", "edit", () => startEditing(doc)));
+        card.appendChild(makeButton("Delete Document", "delete", () => removeDocument(doc)));
+        list.appendChild(card);
+    });
+}
+
+function openAddForm() {
+    editingId = null;
+    form.reset();
+    fileInput.disabled = false;
+    document.getElementById("formTitle").textContent = "Add a Document";
+    saveBtn.textContent = "Save Document";
+    formPanel.style.display = "block";
+    document.getElementById("documentName").focus();
+    formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function startEditing(doc) {
+    editingId = doc.id;
+    document.getElementById("documentName").value = doc.documentName;
+    document.getElementById("category").value = doc.category;
+    document.getElementById("expiryDate").value = doc.expiryDate || "";
+    fileInput.value = "";
+    fileInput.disabled = true;
+    document.getElementById("formTitle").textContent = "Edit Document";
+    saveBtn.textContent = "Save Changes";
+    formPanel.style.display = "block";
+    say("Editing details. To replace the file, delete this document and add it again.");
+    formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function removeDocument(doc) {
+    if (!confirm('Delete "' + doc.documentName + '"? This also removes the uploaded file.')) return;
+    try {
+        await LifeGPS.deleteDocument(doc.id);
+        say("Document deleted.");
+        if (editingId === doc.id) cancelForm();
+        await loadDocuments();
+        say("Document deleted.");
+    } catch (err) { say(err.message, true); }
+}
+
+function cancelForm() {
+    form.reset();
+    editingId = null;
+    fileInput.disabled = false;
+    formPanel.style.display = "none";
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save Document";
+}
+
+document.getElementById("showFormBtn").addEventListener("click", openAddForm);
+document.getElementById("cancelBtn").addEventListener("click", cancelForm);
+searchBox.addEventListener("input", renderDocuments);
+
+document.querySelectorAll(".category").forEach(button => {
+    button.addEventListener("click", () => {
+        document.querySelectorAll(".category").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        selectedCategory = button.dataset.category;
+        renderDocuments();
+    });
+});
+
+form.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+
+    const name = document.getElementById("documentName").value.trim();
+    const category = document.getElementById("category").value;
+    const expiryDate = document.getElementById("expiryDate").value;
+    const file = fileInput.files[0];
+
+    if (file && file.size > 10 * 1024 * 1024) { say("Please select a file smaller than 10 MB.", true); return; }
+    if (file && !/\.(pdf|png|jpe?g)$/i.test(file.name)) { say("Only PDF, PNG, JPG and JPEG files are supported.", true); return; }
+
+    saveBtn.disabled = true;
+    say("Saving...");
+    try {
+        if (editingId !== null) {
+            await LifeGPS.updateDocument(editingId, { documentName: name, category, expiryDate: expiryDate || null });
+        } else if (file) {
+            const fd = new FormData();
+            fd.append("file", file);
+            fd.append("documentName", name);
+            fd.append("category", category);
+            if (expiryDate) fd.append("expiryDate", expiryDate);
+            await LifeGPS.uploadDocument(fd);
+        } else {
+            await LifeGPS.addDocument({ documentName: name, category, expiryDate: expiryDate || null });
+        }
+        const wasEditing = editingId !== null;
+        cancelForm();
+        await loadDocuments();
+        say(wasEditing ? "Document updated." : "Document saved.");
+    } catch (err) {
+        say(err.message, true);
+    } finally {
+        saveBtn.disabled = false;
+    }
+});
+
+loadDocuments();
+
+</script>
+
+</body>
+</html>

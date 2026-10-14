@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGPS | Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #1e293b;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .sidebar a {
+            display: block;
+            width: 100%;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar .brand {
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar li a:hover { color: white; }
+
+        .sidebar li.active a {
+            color: white;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 17px;
+            color: #64748b;
+        }
+
+        .demo-label {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .dashboard-button,
+        .priority-right button,
+        .ai-card button {
+            display: inline-block;
+            border: none;
+            border-radius: 11px;
+            padding: 13px 19px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .dashboard-button:hover,
+        .priority-right button:hover,
+        .ai-card button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-notice {
+            margin-bottom: 30px;
+            padding: 18px 22px;
+            border-radius: 14px;
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .priority-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 28px;
+            flex-wrap: wrap;
+            padding: 32px;
+            margin-bottom: 34px;
+            border-radius: 20px;
+        }
+
+        .priority-left {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .priority-left h3 {
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .priority-left h2 {
+            font-size: 28px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .priority-left p {
+            max-width: 620px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .priority-right {
+            flex-shrink: 0;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            margin-bottom: 42px;
+        }
+
+        .card {
+            min-height: 145px;
+            padding: 25px;
+            border-radius: 16px;
+        }
+
+        .card h2 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .card p {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card small {
+            display: block;
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #64748b;
+        }
+
+        .section {
+            margin-bottom: 42px;
+        }
+
+        .section > h2 {
+            font-size: 27px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .ai-card {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+            min-height: 235px;
+            padding: 26px;
+            border-radius: 17px;
+        }
+
+        .ai-card h3 {
+            font-size: 19px;
+            line-height: 1.5;
+        }
+
+        .ai-card p {
+            flex: 1;
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .ai-card button { margin-top: 8px; }
+
+        .events {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .event {
+            display: block;
+            padding: 18px 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            background: white;
+            color: #1e293b;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .event:hover {
+            color: #2563eb;
+            border-color: #93c5fd;
+            background: #f8fbff;
+        }
+
+        .dashboard-footer {
+            text-align: center;
+            color: #64748b;
+            padding: 20px 0 30px;
+            font-size: 14px;
+        }
+
+        @media (min-width: 1200px) {
+            .cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .sidebar li { margin-bottom: 0; }
+            .main { padding: 26px !important; }
+            .header h1 { font-size: 30px; }
+        }
+
+        @media (max-width: 600px) {
+            .main { padding: 20px 16px !important; }
+            .header h1 { font-size: 27px; }
+            .header p { font-size: 16px; }
+            .priority-card { padding: 23px; }
+            .priority-left h2 { font-size: 24px; }
+            .cards, .ai-grid, .events { grid-template-columns: 1fr; }
+            .section > h2 { font-size: 24px; }
+            .ai-card { min-height: 210px; }
+            .dashboard-button { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="dashboard">
+
+    <aside class="sidebar">
+        <h2><a class="brand" href="dashboard.html">LifeGPS</a></h2>
+
+        <ul>
+            <li class="active">
+                <a href="dashboard.html" aria-current="page">📊 Dashboard</a>
+            </li>
+            <li><a href="documents.html">📄 Documents</a></li>
+            <li><a href="life-events.html">📅 Life Events</a></li>
+            <li><a href="ai-assistant.html">🤖 AI Assistant</a></li>
+            <li><a href="reminders.html">⏰ Reminders</a></li>
+            <li><a href="profile.html">👤 Profile</a></li>
+        </ul>
+    </aside>
+
+    <main class="main">
+
+        <header class="header">
+            <div>
+                <h1>Welcome to LifeGPS 👋</h1>
+                <p>Your personal space to plan, organize, and prepare.</p>
+                
+            </div>
+
+            <a href="profile.html" class="dashboard-button">View Profile →</a>
+        </header>
+
+        <div class="dashboard-notice" id="dashNotice">
+            Your documents, reminders and life events are saved to your account.
+        </div>
+
+        <section class="priority-card">
+            <div class="priority-left">
+                <h3>✨ YOUR NEXT STEP</h3>
+                <h2>Prepare for What's Next</h2>
+                <p>
+                    Choose a life event, review the documents you'll need,
+                    and create a plan to stay prepared.
+                </p>
+            </div>
+
+            <div class="priority-right">
+                <button type="button"
+                        onclick="location.href='life-events.html'">
+                    Explore Life Events →
+                </button>
+            </div>
+        </section>
+
+        <section class="cards" aria-label="Dashboard overview">
+            <div class="card">
+                <h2 id="docCount">—</h2>
+                <p>Documents</p>
+                <small id="docNote">Loading...</small>
+            </div>
+
+            <div class="card">
+                <h2 id="eventCount">—</h2>
+                <p>Life Events</p>
+                <small id="eventNote">Loading...</small>
+            </div>
+
+            <div class="card">
+                <h2 id="reminderCount">—</h2>
+                <p>Reminders</p>
+                <small id="reminderNote">Loading...</small>
+            </div>
+
+            <div class="card">
+                <h2>✨</h2>
+                <p>AI Guidance</p>
+                <small>Explore preparation tips</small>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Explore LifeGPS</h2>
+            <p class="section-subtitle">
+                Choose a tool to help you prepare for important milestones.
+            </p>
+
+            <div class="ai-grid">
+                <article class="ai-card">
+                    <h3>📁 Document Manager</h3>
+                    <p>
+                        Organize essential documents and keep track of
+                        their expiry dates in one place.
+                    </p>
+                    <button type="button"
+                            onclick="location.href='documents.html'">
+                        Manage Documents →
+                    </button>
+                </article>
+
+                <article class="ai-card">
+                    <h3>🧭 Life Event Planner</h3>
+                    <p>
+                        Explore requirements and preparation checklists
+                        for travel, higher studies, marriage, and more.
+                    </p>
+                    <button type="button"
+                            onclick="location.href='life-events.html'">
+                        Plan an Event →
+                    </button>
+                </article>
+
+                <article class="ai-card">
+                    <h3>⏰ Reminders</h3>
+                    <p>
+                        Review important dates, upcoming tasks,
+                        and document renewals.
+                    </p>
+                    <button type="button"
+                            onclick="location.href='reminders.html'">
+                        View Reminders →
+                    </button>
+                </article>
+
+                <article class="ai-card">
+                    <h3>🤖 AI Assistant</h3>
+                    <p>
+                        Explore guidance and preparation ideas for
+                        upcoming life events.
+                    </p>
+                    <button type="button"
+                            onclick="location.href='ai-assistant.html'">
+                        Explore Guidance →
+                    </button>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Life Events to Explore</h2>
+            <p class="section-subtitle">
+                Select a milestone to explore its preparation checklist.
+            </p>
+
+            <div class="events">
+                <a class="event" href="life-events.html"
+                   onclick="sessionStorage.setItem('selectedLifeEvent','Buying a House')">
+                    🏠 Buying a House
+                </a>
+
+                <a class="event" href="life-events.html"
+                   onclick="sessionStorage.setItem('selectedLifeEvent','Foreign Travel')">
+                    ✈️ Foreign Travel
+                </a>
+
+                <a class="event" href="life-events.html"
+                   onclick="sessionStorage.setItem('selectedLifeEvent','Marriage')">
+                    💍 Marriage
+                </a>
+
+                <a class="event" href="life-events.html"
+                   onclick="sessionStorage.setItem('selectedLifeEvent','Higher Studies')">
+                    🎓 Higher Studies
+                </a>
+
+                <a class="event" href="life-events.html"
+                   onclick="sessionStorage.setItem('selectedLifeEvent','Retirement')">
+                    🌅 Retirement
+                </a>
+
+                <a class="event" href="life-events.html"
+                   onclick="sessionStorage.setItem('selectedLifeEvent','Medical Emergency')">
+                    🩺 Medical Emergency
+                </a>
+            </div>
+        </section>
+
+        <footer class="dashboard-footer">
+            LifeGPS · Plan ahead. Stay prepared.
+        </footer>
+
+    </main>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+if (LifeGPS.requireLogin()) {
+  const user = LifeGPS.user();
+  if (user && user.name) document.querySelector(".header h1").textContent = "Welcome, " + user.name.split(" ")[0] + " 👋";
+  (async function () {
+    const set = (id, v) => { document.getElementById(id).textContent = v; };
+    try {
+      const [docs, events, reminders] = await Promise.all([LifeGPS.getDocuments(), LifeGPS.getLifeEvents(), LifeGPS.getReminders()]);
+      set("docCount", docs.length);
+      set("eventCount", events.length);
+      set("reminderCount", reminders.filter(r => r.status !== "Completed").length);
+      set("docNote", docs.filter(d => d.expiryDate && new Date(d.expiryDate + "T00:00:00") < new Date()).length + " expired");
+      set("eventNote", events.filter(e => e.status !== "Completed").length + " in progress / planned");
+      set("reminderNote", "Pending reminders");
+    } catch (e) {
+      document.getElementById("dashNotice").textContent = e.message;
+    }
+  })();
+}
+</script>
+</body>
+</html>

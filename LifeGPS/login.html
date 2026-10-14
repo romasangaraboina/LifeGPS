@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGPS | Login</title>
+    <link rel="stylesheet" href="css/login.css">
+
+    <style>
+        /* Keep the password field and eye button on one line */
+        .password-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .password-box input {
+            width: 100%;
+            box-sizing: border-box;
+            padding-right: 52px;
+            margin: 0;
+        }
+
+        .password-box .eye {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            padding: 0;
+            margin: 0;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #26364a;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            line-height: 1;
+            box-shadow: none;
+        }
+
+        .password-box .eye:hover {
+            background: #eef3ff;
+        }
+
+        /* Prevent the main submit button from affecting the eye button */
+        .login-box > button[type="submit"] {
+            display: block;
+            width: 100%;
+            min-height: 48px;
+            margin-top: 24px;
+            cursor: pointer;
+        }
+
+        .login-box > label {
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .login-box > input {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 18px;
+        }
+
+        .login-box .signup {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .login-box #message {
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 760px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .container .left,
+            .container .right {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .container .right {
+                padding: 30px 18px;
+            }
+
+            .login-box {
+                width: 100%;
+                max-width: 440px;
+                box-sizing: border-box;
+            }
+
+            .back-home {
+                z-index: 5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-home">← Back to Home</a>
+
+    <div class="container">
+        <section class="left">
+            <h1>LifeGPS</h1>
+            <h2>Navigate Every Life Event with Confidence</h2>
+
+            <p>
+                Keep your important documents organized, prepare for life's
+                milestones, and stay on top of important dates — all in one place.
+            </p>
+
+            <div class="features">
+                <div class="feature">📁 Secure Document Management</div>
+                <div class="feature">🤖 Personalized AI Guidance</div>
+                <div class="feature">⏰ Smart Reminders</div>
+            </div>
+        </section>
+
+        <main class="right">
+            <form class="login-box" id="loginForm">
+                <h2>Welcome Back 👋</h2>
+                <p>Sign in to continue your journey.</p>
+
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="password">Password</label>
+
+                <div class="password-box">
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        minlength="6"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="eye"
+                        id="togglePassword"
+                        aria-label="Show password"
+                        aria-pressed="false"
+                    >👁</button>
+                </div>
+
+                <div style="text-align: right; margin-top: 0;">
+                    <a href="#" id="forgotPassword">Forgot Password?</a>
+                </div>
+
+                <button type="submit">Login</button>
+
+                <p
+                    id="message"
+                    role="status"
+                    aria-live="polite"
+                    style="margin: 12px 0 0; font-size: 13px;"
+                ></p>
+
+                <div class="signup">
+                    Don't have an account?
+                    <a href="signup.html">Create Account</a>
+                </div>
+
+                <p style="font-size: 12px; margin: 18px 0 0;">
+                    Sign in securely using your LifeGPS account.
+                </p>
+            </form>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+const loginForm=document.getElementById("loginForm"), passwordInput=document.getElementById("password"), togglePassword=document.getElementById("togglePassword"), message=document.getElementById("message");
+togglePassword.addEventListener("click",function(){const show=passwordInput.type==="password";passwordInput.type=show?"text":"password";this.textContent=show?"🙈":"👁";this.setAttribute("aria-label",show?"Hide password":"Show password");this.setAttribute("aria-pressed",String(show));});
+document.getElementById("forgotPassword").addEventListener("click",e=>{e.preventDefault();message.textContent="Password reset is not configured yet. Please contact the project administrator.";});
+loginForm.addEventListener("submit",async e=>{e.preventDefault();if(!loginForm.reportValidity())return;const btn=loginForm.querySelector('button[type="submit"]');btn.disabled=true;message.style.color="#334155";message.textContent="Signing in...";try{await LifeGPS.login(document.getElementById("email").value.trim(),passwordInput.value);message.style.color="green";message.textContent="Login successful! Opening your dashboard...";setTimeout(()=>location.href="dashboard.html",500);}catch(err){message.style.color="#b91c1c";message.textContent=err.message||"Could not connect. Check that the backend is running on port 8080.";}finally{btn.disabled=false;}});
+</script>
+</body>
+</html>

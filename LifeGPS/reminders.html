@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeGPS - Reminders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',Arial,sans-serif}
+body{background:#f5f8ff;color:#172033;font-size:16px}
+.sidebar{width:255px;height:100vh;background:linear-gradient(180deg,#2563eb,#167acb);color:white;padding:28px 18px;position:fixed;inset:0 auto 0 0;overflow-y:auto}
+.logo{font-size:29px;font-weight:700;margin-bottom:42px;padding-left:10px}
+.nav-item{display:block;text-decoration:none;color:white;padding:15px;margin-bottom:9px;border-radius:12px;font-size:15px;transition:background .2s}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.19)}
+.main{margin-left:255px;width:calc(100% - 255px);padding:42px;max-width:1600px}
+.header{margin-bottom:28px}
+.header h1{font-size:34px;line-height:1.3;margin-bottom:10px}
+.header p{color:#64748b;font-size:16px;line-height:1.8}
+.demo-note{background:#eaf2ff;color:#1d4ed8;padding:17px 20px;border-radius:12px;margin-bottom:28px;font-size:14px;line-height:1.8}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-bottom:30px}
+.summary-card,.section{background:white;border-radius:18px;box-shadow:0 7px 23px rgba(30,64,175,.07)}
+.summary-card{padding:27px}
+.summary-card h2{color:#2563eb;font-size:32px;margin-bottom:8px}
+.summary-card p{color:#64748b;font-size:15px;line-height:1.6}
+.section{padding:30px;margin-bottom:28px}
+.section h2{font-size:23px;margin-bottom:23px}
+.reminder{display:flex;justify-content:space-between;align-items:center;gap:22px;padding:22px;border:1px solid #e5eaf5;border-radius:15px;margin-bottom:16px;transition:box-shadow .2s}
+.reminder:last-child{margin-bottom:0}
+.reminder:hover{box-shadow:0 7px 18px rgba(30,64,175,.07)}
+.reminder.completed{opacity:.7;background:#f8fafc}
+.reminder-left{display:flex;align-items:center;gap:17px;min-width:0}
+.reminder-icon{width:54px;height:54px;min-width:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:25px}
+.urgent-icon{background:#fee2e2}.soon-icon{background:#fef3c7}.upcoming-icon{background:#dcfce7}
+.reminder-info h3{font-size:17px;margin-bottom:7px;overflow-wrap:anywhere}
+.reminder-info p{color:#64748b;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.reminder-right{text-align:right;min-width:165px}
+.status{display:inline-block;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:9px}
+.urgent{background:#fee2e2;color:#dc2626}.soon{background:#fef3c7;color:#b45309}.upcoming{background:#dcfce7;color:#15803d}.done{background:#e2e8f0;color:#475569}
+.date{display:block;color:#64748b;font-size:13px;margin-bottom:10px}
+.action-btn{padding:10px 14px;border:0;border-radius:9px;background:#2563eb;color:white;cursor:pointer;font-size:13px;font-weight:600;margin:4px}
+.action-btn:hover{background:#1d4ed8}
+.delete-btn{background:#fee2e2;color:#dc2626}.delete-btn:hover{background:#fecaca}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:15px;font-weight:600;margin-bottom:9px}
+.form-group input,.form-group select{width:100%;padding:14px;border:1px solid #cbd5e1;border-radius:10px;background:white;font-size:15px;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:#2563eb;box-shadow:0 0 0 3px #dbeafe}
+.primary-btn{padding:13px 20px;border:0;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:15px;font-weight:600}
+.primary-btn:hover{background:#1d4ed8}
+.empty-state{padding:23px;background:#f8faff;border-radius:12px;color:#64748b;font-size:15px;line-height:1.8}
+.message{font-size:14px;margin-top:14px;line-height:1.6}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}
+@media(max-width:1050px){.main{padding:30px}.summary{gap:14px}.summary-card{padding:21px}}
+@media(max-width:800px){.sidebar{width:210px;padding:22px 12px}.main{margin-left:210px;width:calc(100% - 210px);padding:25px 18px}.summary{grid-template-columns:1fr}.reminder{align-items:flex-start;flex-direction:column}.reminder-right{text-align:left;min-width:0}.form-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.sidebar{width:68px;padding:20px 7px}.logo{font-size:0;text-align:center;padding:0}.logo:after{content:"L";font-size:25px}.nav-item{font-size:0;text-align:center;padding:14px 4px}.nav-item::first-letter{font-size:20px}.main{margin-left:68px;width:calc(100% - 68px);padding:22px 12px}.header h1{font-size:27px}.header p{font-size:14px}.section{padding:19px}.section h2{font-size:20px}.reminder{padding:16px}.reminder-left{align-items:flex-start;gap:12px}.reminder-icon{width:43px;height:43px;min-width:43px;font-size:21px}.reminder-info h3{font-size:15px}.reminder-info p{font-size:13px}.summary-card{padding:20px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo">LifeGPS</div>
+  <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+  <a href="documents.html" class="nav-item">📄 Documents</a>
+  <a href="life-events.html" class="nav-item">🗓️ Life Events</a>
+  <a href="ai-assistant.html" class="nav-item">🤖 AI Assistant</a>
+  <a href="reminders.html" class="nav-item active">⏰ Reminders</a>
+  <a href="profile.html" class="nav-item">👤 Profile</a>
+</aside>
+
+<main class="main">
+  <header class="header">
+    <h1>Reminders ⏰</h1>
+    <p>Keep track of important deadlines, tasks, and document renewals.</p>
+  </header>
+
+  <div class="demo-note">ℹ️ Reminders are saved to your account. Document expiry reminders are created automatically for documents expiring within 30 days.</div>
+
+  <section class="summary">
+    <div class="summary-card"><h2 id="urgentCount">0</h2><p>Urgent / Overdue</p></div>
+    <div class="summary-card"><h2 id="soonCount">0</h2><p>Due Within 7 Days</p></div>
+    <div class="summary-card"><h2 id="totalCount">0</h2><p>Pending Reminders</p></div>
+  </section>
+
+  <section class="section">
+    <h2>➕ Add a Reminder</h2>
+    <form id="reminderForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="reminderTitle">Reminder Title</label>
+          <input id="reminderTitle" type="text" maxlength="100" placeholder="e.g. Passport renewal" required>
+        </div>
+        <div class="form-group">
+          <label for="reminderDate">Due Date</label>
+          <input id="reminderDate" type="date" required>
+        </div>
+        <div class="form-group">
+          <label for="reminderCategory">Category</label>
+          <select id="reminderCategory">
+            <option>Documents</option><option>Travel</option><option>Education</option><option>Finance</option><option>Health</option><option>Personal</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reminderNotes">Description (Optional)</label>
+          <input id="reminderNotes" type="text" maxlength="250" placeholder="Add a short note">
+        </div>
+      </div>
+      <button class="primary-btn" type="submit">Save Reminder</button>
+      <p id="formMessage" class="message" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="section">
+    <h2>📌 My Reminders</h2>
+    <div id="reminderList"></div>
+  </section>
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script>
+"use strict";
+if (!LifeGPS.requireLogin()) throw new Error("Not logged in");
+
+let reminders = [];
+
+function getDaysUntil(dateString){
+  if(!dateString)return Infinity;
+  const today=new Date();today.setHours(0,0,0,0);
+  const due=new Date(dateString+"T00:00:00");
+  return Number.isNaN(due.getTime())?Infinity:Math.round((due-today)/86400000);
+}
+function formatDate(dateString){
+  if(!dateString)return "No due date";
+  const date=new Date(dateString+"T00:00:00");
+  return Number.isNaN(date.getTime())?"Invalid date":date.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+}
+function categoryIcon(category){
+  return {Documents:"📄",Travel:"✈️",Education:"🎓",Finance:"🏦",Health:"🏥",Personal:"📌"}[category]||"⏰";
+}
+function isDone(item){return item.status==="Completed";}
+function urgencyFor(item){
+  if(isDone(item))return {label:"Completed",className:"done",iconClass:"upcoming-icon"};
+  const days=getDaysUntil(item.reminderDate);
+  if(days<0)return {label:"Overdue",className:"urgent",iconClass:"urgent-icon"};
+  if(days<=3)return {label:"Urgent",className:"urgent",iconClass:"urgent-icon"};
+  if(days<=7)return {label:"Due Soon",className:"soon",iconClass:"soon-icon"};
+  return {label:"Upcoming",className:"upcoming",iconClass:"upcoming-icon"};
+}
+function updateSummary(items){
+  const pending=items.filter(item=>!isDone(item));
+  document.getElementById("urgentCount").textContent=pending.filter(item=>getDaysUntil(item.reminderDate)<=3).length;
+  document.getElementById("soonCount").textContent=pending.filter(item=>{const d=getDaysUntil(item.reminderDate);return d>=0&&d<=7;}).length;
+  document.getElementById("totalCount").textContent=pending.length;
+}
+async function loadReminders(){
+  try{ reminders=await LifeGPS.getReminders(); }
+  catch(err){
+    reminders=[];
+    const m=document.getElementById("formMessage");
+    m.style.color="#dc2626";m.textContent=err.message;
+  }
+  renderReminders();
+}
+function renderReminders(){
+  const items=reminders.slice();
+  const container=document.getElementById("reminderList");
+  container.replaceChildren();
+  updateSummary(items);
+  if(items.length===0){
+    const empty=document.createElement("div");
+    empty.className="empty-state";
+    empty.textContent="No reminders yet. Use the form above to create your first reminder.";
+    container.appendChild(empty);return;
+  }
+  items.sort((a,b)=>{
+    if(isDone(a)!==isDone(b))return isDone(a)?1:-1;
+    return (a.reminderDate||"9999-12-31").localeCompare(b.reminderDate||"9999-12-31");
+  }).forEach(item=>{
+    const urgency=urgencyFor(item);
+    const card=document.createElement("article");
+    card.className="reminder"+(isDone(item)?" completed":"");
+    const left=document.createElement("div");left.className="reminder-left";
+    const icon=document.createElement("div");icon.className="reminder-icon "+urgency.iconClass;icon.textContent=categoryIcon(item.category);
+    const info=document.createElement("div");info.className="reminder-info";
+    const title=document.createElement("h3");title.textContent=item.title;
+    const description=document.createElement("p");description.textContent=item.message||item.category||"Personal reminder";
+    info.append(title,description);left.append(icon,info);
+    const right=document.createElement("div");right.className="reminder-right";
+    const badge=document.createElement("span");badge.className="status "+urgency.className;badge.textContent=urgency.label;
+    const date=document.createElement("span");date.className="date";date.textContent="Due: "+formatDate(item.reminderDate);
+    right.append(badge,date);
+    if(!isDone(item)){
+      const complete=document.createElement("button");complete.type="button";complete.className="action-btn";complete.textContent="Mark Complete";
+      complete.addEventListener("click",()=>completeReminder(item.id));right.appendChild(complete);
+    }
+    const remove=document.createElement("button");remove.type="button";remove.className="action-btn delete-btn";remove.textContent="Delete";
+    remove.addEventListener("click",()=>deleteReminder(item));right.appendChild(remove);
+    card.append(left,right);container.appendChild(card);
+  });
+}
+document.getElementById("reminderForm").addEventListener("submit",async function(event){
+  event.preventDefault();
+  const form=this;
+  const title=document.getElementById("reminderTitle").value.trim();
+  const dueDate=document.getElementById("reminderDate").value;
+  const category=document.getElementById("reminderCategory").value;
+  const description=document.getElementById("reminderNotes").value.trim();
+  const message=document.getElementById("formMessage");
+  if(!title||!dueDate){message.style.color="#dc2626";message.textContent="Please enter a title and due date.";return;}
+  const btn=form.querySelector('button[type="submit"]');btn.disabled=true;
+  try{
+    await LifeGPS.createReminder({title,message:description,category,reminderDate:dueDate});
+    form.reset();
+    message.style.color="#15803d";message.textContent="Reminder saved to your account.";
+    await loadReminders();
+  }catch(err){message.style.color="#dc2626";message.textContent=err.message;}
+  finally{btn.disabled=false;}
+});
+async function completeReminder(id){
+  try{await LifeGPS.setReminderStatus(id,"Completed");await loadReminders();}
+  catch(err){alert(err.message);}
+}
+async function deleteReminder(item){
+  if(!confirm('Delete the reminder "'+item.title+'"?'))return;
+  try{await LifeGPS.deleteReminder(item.id);await loadReminders();}
+  catch(err){alert(err.message);}
+}
+loadReminders();
+
+</script>
+
+</body>
+</html>
