@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGPS Login</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <a href="index.html" class="back-home">← Back to Home</a>
+
+    <div class="container">
+        <div class="left">
+            <h1>LifeGPS</h1>
+            <h2>Navigate Every Life Event with Confidence</h2>
+            <p>
+                Secure your important documents,
+                receive AI-powered guidance,
+                and never miss important life events.
+            </p>
+            <div class="features">
+                <div class="feature">📁 Secure Documents</div>
+                <div class="feature">🤖 AI Guidance</div>
+                <div class="feature">⏰ Smart Reminders</div>
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="login-box">
+                <h2>Welcome Back 👋</h2>
+                <p>Login to continue.</p>
+
+                <input type="email" id="email"
+                       placeholder="Email Address">
+
+                <div class="password-box">
+                    <input type="password" id="password"
+                           placeholder="Password">
+                    <span onclick="togglePassword()" class="eye">👁</span>
+                </div>
+
+                <a href="#">Forgot Password?</a>
+                <button type="button" onclick="loginUser()">Login</button>
+
+                <div class="signup">
+                    Don't have an account?
+                    <a href="signup.html">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const password = document.getElementById("password");
+            password.type =
+                password.type === "password" ? "text" : "password";
+        }
+
+        async function loginUser() {
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            if (!email || !password) {
+                alert("Please enter email and password.");
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                 "https://lifegps-backend.onrender.com/api/auth/login" ,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email, password })
+                    }
+                );
+
+                const text = await response.text();
+                let data = {};
+
+                try {
+                    data = text ? JSON.parse(text) : {};
+                } catch {
+                    data = {};
+                }
+
+                if (!response.ok) {
+                    alert(
+                        "Login failed (" + response.status + "): " +
+                        (data.message || text || "Check your login details.")
+                    );
+                    return;
+                }
+
+                if (!data.token) {
+                    alert("Server responded, but no login token was received.");
+                    return;
+                }
+
+                localStorage.setItem("token", data.token);
+                alert("Login successful!");
+                window.location.href = "dashboard.html";
+
+            } catch (error) {
+                console.error("LifeGPS login error:", error);
+                alert(
+                    "Could not reach the login API. This may be a CORS issue. " +
+                    "Please note the exact error in the browser console."
+                );
+            }
+        }
+    </script>
+</body>
+</html>

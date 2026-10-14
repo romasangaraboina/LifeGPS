@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeGPS Sign Up</title>
+
+    <link rel="stylesheet" href="css/signup.css">
+</head>
+
+<body>
+
+<a href="index.html" class="back-home">← Back to Home</a>
+
+<div class="container">
+
+    <!-- Left Side -->
+
+    <div class="left">
+
+        <h1>LifeGPS</h1>
+
+        <h2>Start Your Journey Today</h2>
+
+        <p>
+            Create your LifeGPS account to securely manage documents,
+            receive AI-powered guidance, and stay prepared for every life event.
+        </p>
+
+        <div class="features">
+
+            <div class="feature">📁 Secure Documents</div>
+
+            <div class="feature">🤖 AI Guidance</div>
+
+            <div class="feature">⏰ Smart Reminders</div>
+
+        </div>
+
+    </div>
+
+    <!-- Right Side -->
+
+    <div class="right">
+
+        <div class="signup-box">
+
+            <h2>Create Account</h2>
+
+            <p>Join LifeGPS today.</p>
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Full Name"
+            >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Email Address"
+            >
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="Phone Number"
+            >
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+            >
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm Password"
+            >
+
+            <button onclick="registerUser()">
+                Create Account
+            </button>
+
+            <div class="login-link">
+
+                Already have an account?
+
+                <a href="login.html">Login</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function registerUser() {
+
+    const name =
+        document.getElementById("name").value.trim();
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+
+    // Check empty fields
+
+    if (!name || !email || !phone || !password || !confirmPassword) {
+
+        alert("Please fill in all fields.");
+
+        return;
+    }
+
+
+    // Check password match
+
+    if (password !== confirmPassword) {
+
+        alert("Passwords do not match.");
+
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            "https://lifegps-backend.onrender.com/api/auth/register",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    password: password
+                })
+            }
+        );
+
+
+        const data = await response.json();
+
+
+        if (response.ok) {
+
+            alert("Account created successfully!");
+
+            window.location.href = "login.html";
+
+        } else {
+
+            alert(
+                data.message ||
+                "Registration failed."
+            );
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to connect to LifeGPS server."
+        );
+    }
+}
+
+</script>
+
+</body>
+
+</html>
